@@ -1,1 +1,1 @@
-export const DB_NAME = "mern Stack"
+export const DB_NAME = 'video'
