@@ -6,8 +6,7 @@ import {
 } from "../controllers/user.controller.js";
 const router = Router();
 import { upload } from "../middleware/multer.middleware.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
-
+import { verifyJWT } from "../middleware/auth.middleware.js";
 router.route("/register").post(
   //   upload.fields([
   //     {
