@@ -11,7 +11,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
+    await user.save({ validateBeforeSave: false }); // refreshToken will be saved in database
 
     return {
       accessToken,
@@ -151,7 +151,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (existedUser) {
     throw new ApiError(409, "User  with email or username already exists");
   }
-   console.log(req.files);
+  console.log(req.files);
 
   //  check for images check  for avatar
   const avatarLocalPath = req.files?.avatar[0]?.path; // getting file avatar
@@ -190,11 +190,11 @@ const registerUser = asyncHandler(async (req, res) => {
   // create user object - create entry in db
   const user = await User.create({
     fullname,
-    avatar: avatar?.url  || "",
+    avatar: avatar?.url || "",
     coverImage: coverImage?.url || "",
     email,
     password,
-    username
+    username,
   });
 
   // remove password refresh tocken fields from response
@@ -252,7 +252,7 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
   // sent cookie
-
+  // option for cookies  this option modify only by server no frontend modify
   const option = {
     httpOnly: true,
     secure: true,
@@ -260,13 +260,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, option) // set accessToken
+    .cookie("accessToken", accessToken, option) // set accessToken as cookie
     .cookie("refreshToken", refreshToken, option) // same as
     .json(
       new ApiResponse(
         200,
         // {
-        // user:loggedInUser,accessToken, this commented coode is data when we will sending in utils files
+        // user:loggedInUser,accessToken, this commented coode is data when we will sending in utils files ApiResponse
         // refreshToken
         // },
         {
@@ -284,7 +284,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     req.user._id,
     {
       $set: {
-        refreshToken: 1,
+        refreshToken: 1, // this code removing refreshToken from database
       },
     },
     {
@@ -296,10 +296,10 @@ const logoutUser = asyncHandler(async (req, res) => {
     secure: true,
   };
 
-  return res
+  return res // removing cookies
     .status(200)
     .clearCookie("accessToken", option)
     .clearCookie("refreshToken", option)
-    .json(new ApiResponse(200, {}, "User logged Out"));
+    .json(new ApiResponse(200, {}, "User logged Out Sucessfully"));
 });
 export { registerUser, loginUser, logoutUser };
