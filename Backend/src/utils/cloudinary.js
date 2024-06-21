@@ -32,4 +32,16 @@ const uploadOnCloudinary = async (localFilePath) => {
   }
 };
 
-export { uploadOnCloudinary };
+const deleteFromCloudinary = async (publicId) => {
+  try {
+    if (!publicId) {
+      return null;
+    }
+
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.error("Error while deleting old avatar from Cloudinary", error);
+  }
+};
+
+export { uploadOnCloudinary, deleteFromCloudinary };
